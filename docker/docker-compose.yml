@@ -12,7 +12,8 @@ services:
       - "9000:9000"
 
     volumes:
-      - namenode-data:/hadoop/dfs/name  
+      - namenode-data:/hadoop/dfs/name 
+      - ../data:/data 
  
     environment:
       CLUSTER_NAME: stock-cluster
@@ -38,7 +39,33 @@ services:
       HDFS_CONF_dfs_replication: 1
 
     networks:
-      - hadoop-network      
+      - hadoop-network
+
+  spark:
+    image: apache/spark:3.5.7-python3
+    container_name: spark
+    hostname: spark
+
+    command: tail -f /dev/null
+
+    depends_on:
+      - namenode
+      - datanode
+
+    volumes:
+      - ../:/app
+      - ./hadoop-conf:/opt/spark/conf
+
+    environment:
+      HADOOP_CONF_DIR: /opt/spark/conf  
+
+    working_dir: /app
+
+    tty: true
+    stdin_open: true
+
+    networks:
+      - hadoop-network          
 
 volumes:
   namenode-data:

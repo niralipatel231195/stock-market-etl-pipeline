@@ -42,3 +42,11 @@ Analytics
 - [ ] Hive Integration
 - [ ] Spark Analytics
 - [ ] PostgreSQL Loading
+
+```bash
+python -m scripts.extract_stock_data
+```
+
+```bash
+python -m scripts.upload_to_hdfs
+```
