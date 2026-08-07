@@ -65,11 +65,83 @@ services:
     stdin_open: true
 
     networks:
-      - hadoop-network          
+      - hadoop-network
+
+  postgres:
+    image: postgres:15
+    container_name: hive-postgres
+    hostname: hive-postgres
+
+    environment:
+      POSTGRES_USER: hive
+      POSTGRES_PASSWORD: hive
+      POSTGRES_DB: metastore
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+    networks:
+      - hadoop-network  
+
+  hive-metastore:
+    build:
+      context: .
+      dockerfile: Dockerfile.hive
+
+    container_name: hive-metastore
+    hostname: hive-metastore
+
+    environment:
+      SERVICE_NAME: metastore
+
+      DB_DRIVER: postgres
+
+      SERVICE_OPTS: >
+        -Djavax.jdo.option.ConnectionURL=jdbc:postgresql://hive-postgres:5432/metastore
+        -Djavax.jdo.option.ConnectionDriverName=org.postgresql.Driver
+        -Djavax.jdo.option.ConnectionUserName=hive
+        -Djavax.jdo.option.ConnectionPassword=hive
+
+    depends_on:
+      - postgres
+      - namenode
+
+    volumes:
+      - ./hadoop-conf/hive-site.xml:/opt/hive/conf/hive-site.xml
+
+    networks:
+      - hadoop-network  
+
+  hive-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.hive
+
+    container_name: hive-server
+    hostname: hive-server
+
+    environment:
+      SERVICE_NAME: hiveserver2
+
+    depends_on:
+      - hive-metastore
+
+    ports:
+      - "10000:10000"
+
+    volumes:
+      - ./hadoop-conf/hive-site.xml:/opt/hive/conf/hive-site.xml
+
+    networks:
+      - hadoop-network
 
 volumes:
   namenode-data:
-  datanode-data:    
+  datanode-data: 
+  postgres-data:   
 
 networks:
   hadoop-network:         
