@@ -2,6 +2,7 @@ from pathlib import Path
 
 # Local Directories
 RAW_DATA_DIR = Path("data/raw")
+PROCESSED_DATA_DIR = Path("data/processed")
 
 # Container Directories
 CONTAINER_RAW_DATA_DIR = "/data/raw"

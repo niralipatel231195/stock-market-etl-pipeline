@@ -12,6 +12,7 @@ from config.settings import (
     HDFS_URI,
     HDFS_RAW_DIR,
     HDFS_PROCESSED_DIR,
+    PROCESSED_DATA_DIR,
 )
 
 # Configure logging
@@ -100,7 +101,6 @@ def write_processed_data(df):
     """
 
     output_path = f"{HDFS_URI}{HDFS_PROCESSED_DIR}"
-
     logging.info(f"Writing Parquet to: {output_path}")
 
     (
@@ -109,7 +109,18 @@ def write_processed_data(df):
         .parquet(output_path)
     )
 
-    logging.info("Parquet files written successfully.")
+    logging.info("HDFS Parquet files written successfully.")
+
+    local_output_path = str(PROCESSED_DATA_DIR)
+    logging.info(f"Writing Parquet locally: {local_output_path}")
+
+    (
+        df.write
+        .mode("overwrite")
+        .parquet(local_output_path)
+    )
+
+    logging.info("Local Parquet files written successfully.")
 
 def main():
 
