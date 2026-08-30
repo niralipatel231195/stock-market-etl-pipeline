@@ -12,8 +12,10 @@ pandas==3.0.3
 peewee==4.2.3
 platformdirs==4.10.0
 protobuf==7.35.1
+py4j==0.10.9.9
 pycparser==3.0
 Pygments==2.20.0
+pyspark==4.2.0
 python-dateutil==2.9.0.post0
 pytz==2026.2
 requests==2.34.2
